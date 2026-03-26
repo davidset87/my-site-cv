@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Linkedin, Github } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 import './Contact.css';
 
 const Contact = () => {
@@ -9,6 +10,8 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  
+  const [isSending, setIsSending] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -19,9 +22,30 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! I will get back to you soon.');
-    setFormData({ name: '', email: '', subject: '', message: '' });
+    setIsSending(true);
+
+    const serviceID = 'service_7a7bpay';
+    const templateID = 'template_70n1ttb'; // ✅ FIXED
+    const publicKey = 'IY7Umje5EkZzdGsyd';
+
+    const templateParams = {
+      name: formData.name,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message
+    };
+
+    emailjs.send(serviceID, templateID, templateParams, publicKey)
+      .then(() => {
+        alert('✅ Message sent successfully! I will get back to you soon.');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+        setIsSending(false);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert('❌ Error sending message. Please try again.');
+        setIsSending(false);
+      });
   };
 
   const contactInfo = [
@@ -85,17 +109,16 @@ const Contact = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-button"
-                aria-label="LinkedIn"
               >
                 <Linkedin size={20} />
                 <span>LinkedIn</span>
               </a>
+
               <a
                 href="https://github.com/davidset87"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-button"
-                aria-label="GitHub"
               >
                 <Github size={20} />
                 <span>GitHub</span>
@@ -108,64 +131,56 @@ const Contact = () => {
           <h3 className="form-title">Send a Message</h3>
           
           <div className="form-group">
-            <label htmlFor="name" className="form-label">Name</label>
+            <label className="form-label">Name</label>
             <input
               type="text"
-              id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
               className="form-input"
-              placeholder="Your name"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
-              id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               className="form-input"
-              placeholder="your.email@example.com"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="subject" className="form-label">Subject</label>
+            <label className="form-label">Subject</label>
             <input
               type="text"
-              id="subject"
               name="subject"
               value={formData.subject}
               onChange={handleChange}
               className="form-input"
-              placeholder="What's this about?"
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="message" className="form-label">Message</label>
+            <label className="form-label">Message</label>
             <textarea
-              id="message"
               name="message"
               value={formData.message}
               onChange={handleChange}
               className="form-textarea"
-              placeholder="Your message..."
               rows="6"
               required
-            ></textarea>
+            />
           </div>
 
-          <button type="submit" className="submit-btn">
+          <button type="submit" className="submit-btn" disabled={isSending}>
             <Send size={20} />
-            Send Message
+            {isSending ? 'Sending...' : 'Send Message'}
           </button>
         </form>
       </div>

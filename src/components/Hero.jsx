@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Mail, Phone, Linkedin, Github } from 'lucide-react';
 import './Hero.css';
+import profilePic from "../assets/me.jpeg";
 
 const Hero = () => {
   return (
@@ -63,8 +64,8 @@ const Hero = () => {
         <div className="hero-image">
           <div className="profile-card">
             <div className="profile-placeholder">
-              <div className="profile-initials">DKS</div>
-            </div>
+  <img src={profilePic} alt="DKS" className="profile-img" />
+</div>
             <div className="profile-badge">
               <span className="badge-icon">🎓</span>
               <span className="badge-text">Open to Work</span>
